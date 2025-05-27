@@ -425,21 +425,58 @@
         }
 
         async function polishReview(reviewText) {
-            // 模拟调用 Cloudflare AI 接口
-            // 实际部署时需要替换为真实的 Cloudflare Workers AI 调用
-            
-            // 模拟网络延迟
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // 模拟 AI 润色结果
-            const templates = [
-                `这家餐厅真的让我印象深刻！${reviewText.replace('。', '')}，整体用餐体验非常棒。老板和服务员都很用心，能感受到他们对食物的热爱。推荐大家来试试，绝对不会失望！`,
-                `昨天和朋友来这家店吃饭，${reviewText.replace('。', '')}，我们都很满意。从进门到离开，整个过程都很愉快。特别是菜品的味道，真的很棒！下次有机会一定还会再来的。`,
-                `偶然发现这家宝藏餐厅，${reviewText.replace('。', '')}，完全超出了我的期待。无论是环境、服务还是口味都很不错，性价比也很高。已经安利给周围的朋友了，强烈推荐！`,
-                `今天来这家店用餐，${reviewText.replace('。', '')}，总的来说是一次很不错的体验。店家很用心，细节处理得也很好。如果你在附近的话，很推荐来试试看！`
-            ];
-            
-            return templates[Math.floor(Math.random() * templates.length)];
+            try {
+                // 调用 Cloudflare Workers AI 接口
+                const response = await fetch('/api/polish-review', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: reviewText,
+                        prompt: `请将以下餐厅评价标签润色成一段自然流畅的餐厅点评，要求：
+1. 语言自然亲切，像朋友在分享用餐体验
+2. 保持原有信息的准确性
+3. 字数控制在80-120字之间
+4. 语调积极正面
+5. 适合发布在点评网站上
+
+评价标签：${reviewText}
+
+请直接返回润色后的点评内容，不需要其他说明。`
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 检查响应格式并提取文本
+                if (data.result && data.result.response) {
+                    return data.result.response.trim();
+                } else if (data.response) {
+                    return data.response.trim();
+                } else if (typeof data === 'string') {
+                    return data.trim();
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+                
+            } catch (error) {
+                console.error('AI润色失败:', error);
+                
+                // 降级到本地模板
+                const templates = [
+                    `这家餐厅真的让我印象深刻！${reviewText.replace('。', '')}，整体用餐体验非常棒。老板和服务员都很用心，能感受到他们对食物的热爱。推荐大家来试试，绝对不会失望！`,
+                    `昨天和朋友来这家店吃饭，${reviewText.replace('。', '')}，我们都很满意。从进门到离开，整个过程都很愉快。特别是菜品的味道，真的很棒！下次有机会一定还会再来的。`,
+                    `偶然发现这家宝藏餐厅，${reviewText.replace('。', '')}，完全超出了我的期待。无论是环境、服务还是口味都很不错，性价比也很高。已经安利给周围的朋友了，强烈推荐！`,
+                    `今天来这家店用餐，${reviewText.replace('。', '')}，总的来说是一次很不错的体验。店家很用心，细节处理得也很好。如果你在附近的话，很推荐来试试看！`
+                ];
+                
+                return templates[Math.floor(Math.random() * templates.length)];
+            }
         }
 
         function copyResult() {

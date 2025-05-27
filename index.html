@@ -2,48 +2,31 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>餐厅评价助手</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐厅评价生成器</title>
     <style>
-        /* CSS Reset & Base */
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(45deg, #ff9a9e, #fecfef);
-            --text-primary: #333;
-            --text-secondary: #666;
-            --border-color: #e1e5e9;
-            --border-radius: 12px;
-            --border-radius-lg: 20px;
-            --border-radius-xl: 25px;
-            --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
-            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: var(--primary-gradient);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            font-display: swap;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 400px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: var(--border-radius-lg);
-            padding: 30px;
-            box-shadow: var(--shadow-lg);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            contain: layout style paint;
         }
 
         .header {
@@ -52,559 +35,483 @@
         }
 
         .header h1 {
-            color: var(--text-primary);
-            font-size: 2em;
-            margin-bottom: 10px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #2d3748;
+            font-size: 24px;
             font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .header p {
-            color: var(--text-secondary);
-            font-size: 0.9em;
+            color: #718096;
+            font-size: 14px;
         }
 
-        /* Shared section styles */
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.2em;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .category-section {
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid #667eea;
-            contain: layout style;
+        .category {
+            margin-bottom: 24px;
         }
 
         .category-title {
-            font-size: 1.1em;
-            color: var(--text-primary);
-            margin-bottom: 12px;
+            font-size: 16px;
             font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
         }
 
-        .tags-container {
+        .category-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        .tags {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
 
         .tag {
-            background: var(--secondary-gradient);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: var(--border-radius-xl);
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 13px;
             cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-size: 0.9em;
-            font-weight: 500;
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-            will-change: transform;
-        }
-
-        .tag::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s;
-        }
-
-        .tag:hover::before {
-            left: 100%;
+            transition: all 0.3s ease;
+            user-select: none;
         }
 
         .tag:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .tag:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .text-input {
-            width: 100%;
-            min-height: 120px;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1em;
-            line-height: 1.5;
-            resize: vertical;
-            transition: var(--transition);
-            font-family: inherit;
-            will-change: border-color, box-shadow;
-        }
-
-        .text-input:focus {
-            outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
         }
 
-        .button-section {
+        .tag.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .review-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .review-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .review-content {
+            min-height: 80px;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .review-content:empty:before {
+            content: "选择上方标签，评价内容将在此显示...";
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .buttons {
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .btn {
-            padding: 12px 30px;
+            flex: 1;
+            padding: 14px;
             border: none;
-            border-radius: var(--border-radius-xl);
-            font-size: 1em;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            will-change: transform;
         }
 
-        .btn::after {
-            content: '';
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .loading {
+            display: none;
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
         }
 
-        .btn:active::after {
-            width: 300px;
-            height: 300px;
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-page {
+            display: none;
+        }
+
+        .result-content {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2d3748;
+            margin-bottom: 16px;
         }
 
         .copy-btn {
-            background: var(--primary-gradient);
+            background: #48bb78;
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+            background: #38a169;
+            transform: translateY(-1px);
         }
 
-        .clear-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        .back-btn {
+            background: #718096;
             color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 12px;
         }
 
-        .clear-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.3);
+        .back-btn:hover {
+            background: #4a5568;
         }
 
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4caf50;
-            color: white;
-            padding: 15px 25px;
-            border-radius: var(--border-radius-xl);
-            font-weight: 500;
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
-            transform: translateX(400px);
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        /* Media queries optimized */
-        @media screen and (max-width: 768px) {
-            body { padding: 10px; }
-            .container { 
-                padding: 20px 15px; 
-                margin: 0; 
-                border-radius: 15px; 
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
             }
-            .header h1 { font-size: 1.5em; }
-            .header p { font-size: 0.85em; }
-            .category-section { 
-                padding: 15px; 
-                margin-bottom: 20px; 
-            }
-            .category-title { font-size: 1em; }
-            .tags-container { gap: 6px; }
+            
             .tag {
-                font-size: 0.85em;
-                padding: 8px 14px;
-                border-radius: 20px;
-                -webkit-tap-highlight-color: transparent;
-            }
-            .text-input {
-                min-height: 100px;
-                padding: 12px;
-                font-size: 16px;
-                border-radius: 10px;
-            }
-            .button-section {
-                flex-direction: column;
-                gap: 12px;
-            }
-            .btn {
-                padding: 14px 25px;
-                -webkit-tap-highlight-color: transparent;
-            }
-            .toast {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                transform: translateY(-100px);
-                text-align: center;
-            }
-            .toast.show {
-                transform: translateY(0);
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .tag {
-                font-size: 0.8em;
-                padding: 6px 12px;
-            }
-            .category-section { padding: 12px; }
-            .text-input {
-                min-height: 80px;
-                padding: 10px;
-            }
-        }
-
-        /* Performance optimizations */
-        .tag, .btn {
-            backface-visibility: hidden;
-            perspective: 1000px;
-        }
-
-        .tags-container {
-            contain: layout;
-        }
-
-        /* Reduce paint on scroll */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+                font-size: 12px;
+                padding: 6px 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🍽️ 餐厅评价助手</h1>
-            <p>点击标签快速生成餐厅评价</p>
-        </header>
+        <div id="main-page">
+            <div class="header">
+                <h1>🍽️ 餐厅评价生成器</h1>
+                <p>选择标签，一键生成真实评价</p>
+            </div>
 
-        <section class="section tags-section">
-            <h3 class="section-title">💭 评价标签</h3>
+            <div class="category">
+                <div class="category-title">
+                    <span>🏪</span> 环境
+                </div>
+                <div class="tags">
+                    <div class="tag" data-text="环境优雅舒适，很适合约会">环境优雅</div>
+                    <div class="tag" data-text="装修很有特色，拍照很好看">装修特色</div>
+                    <div class="tag" data-text="环境接地气，适合朋友小聚">接地气</div>
+                    <div class="tag" data-text="位置便利，交通方便">位置便利</div>
+                    <div class="tag" data-text="店内很干净整洁">干净整洁</div>
+                </div>
+            </div>
+
+            <div class="category">
+                <div class="category-title">
+                    <span>👅</span> 口味
+                </div>
+                <div class="tags">
+                    <div class="tag" data-text="味道正宗，很地道">味道正宗</div>
+                    <div class="tag" data-text="口感丰富，层次分明">口感丰富</div>
+                    <div class="tag" data-text="分量很足，性价比高">分量很足</div>
+                    <div class="tag" data-text="口味清淡，比较健康">口味清淡</div>
+                    <div class="tag" data-text="味道偏重，很下饭">味道偏重</div>
+                    <div class="tag" data-text="创新菜品，口味独特">创新独特</div>
+                </div>
+            </div>
+
+            <div class="category">
+                <div class="category-title">
+                    <span>💁</span> 服务
+                </div>
+                <div class="tags">
+                    <div class="tag" data-text="服务员很热情周到">服务周到</div>
+                    <div class="tag" data-text="上菜速度很快">上菜很快</div>
+                    <div class="tag" data-text="服务态度很好，很耐心">态度很好</div>
+                    <div class="tag" data-text="老板很亲切，像朋友一样">老板亲切</div>
+                    <div class="tag" data-text="会主动推荐菜品">主动推荐</div>
+                </div>
+            </div>
+
+            <div class="category">
+                <div class="category-title">
+                    <span>💰</span> 价格
+                </div>
+                <div class="tags">
+                    <div class="tag" data-text="价格很实惠，学生党友好">价格实惠</div>
+                    <div class="tag" data-text="性价比很高，物超所值">性价比高</div>
+                    <div class="tag" data-text="价位适中，可以接受">价位适中</div>
+                    <div class="tag" data-text="有点小贵，但值得">有点小贵</div>
+                    <div class="tag" data-text="价格便宜，量大实惠">价格便宜</div>
+                </div>
+            </div>
+
+            <div class="category">
+                <div class="category-title">
+                    <span>⭐</span> 综合
+                </div>
+                <div class="tags">
+                    <div class="tag" data-text="总体来说很满意，会再来">总体满意</div>
+                    <div class="tag" data-text="值得推荐给朋友">值得推荐</div>
+                    <div class="tag" data-text="是附近最好的一家">附近最好</div>
+                    <div class="tag" data-text="下次还会再来">下次再来</div>
+                    <div class="tag" data-text="超出预期，很惊喜">超出预期</div>
+                </div>
+            </div>
+
+            <div class="review-section">
+                <div class="review-title">📝 评价预览</div>
+                <div class="review-content" id="reviewContent"></div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-secondary" onclick="clearReview()">清除评价</button>
+                <button class="btn btn-primary" onclick="submitReview()" id="submitBtn">
+                    <span class="btn-text">提交评价</span>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="result-page" class="result-page">
+            <div class="header">
+                <h1>✨ 评价归纳</h1>
+                <p>AI 润色后的评价内容</p>
+            </div>
             
-            <div class="category-section" data-category="environment">
-                <h4 class="category-title">🏠 环境</h4>
-                <div class="tags-container">
-                    <button class="tag" data-text="环境接地气，适合朋友小聚">环境接地气，适合朋友小聚</button>
-                    <button class="tag" data-text="装修很有格调">装修很有格调</button>
-                    <button class="tag" data-text="氛围温馨舒适">氛围温馨舒适</button>
-                    <button class="tag" data-text="位置很好找">位置很好找</button>
-                    <button class="tag" data-text="环境还不错">环境还不错</button>
-                    <button class="tag" data-text="店面干净整洁">店面干净整洁</button>
-                    <button class="tag" data-text="环境一般般">环境一般般</button>
-                    <button class="tag" data-text="装修有点老旧">装修有点老旧</button>
-                    <button class="tag" data-text="空间比较小">空间比较小</button>
-                    <button class="tag" data-text="有点吵闹">有点吵闹</button>
-                </div>
+            <div class="result-content">
+                <div class="result-text" id="resultText"></div>
+                <button class="copy-btn" onclick="copyResult()">复制评价</button>
             </div>
-
-            <div class="category-section" data-category="taste">
-                <h4 class="category-title">🍽️ 口味</h4>
-                <div class="tags-container">
-                    <button class="tag" data-text="色香味俱全，好吃">色香味俱全，好吃</button>
-                    <button class="tag" data-text="味道很正宗">味道很正宗</button>
-                    <button class="tag" data-text="分量足够">分量足够</button>
-                    <button class="tag" data-text="口感不错">口感不错</button>
-                    <button class="tag" data-text="菜品新鲜">菜品新鲜</button>
-                    <button class="tag" data-text="味道一般般">味道一般般</button>
-                    <button class="tag" data-text="口味偏淡">口味偏淡</button>
-                    <button class="tag" data-text="分量有点少">分量有点少</button>
-                    <button class="tag" data-text="口感偏硬">口感偏硬</button>
-                    <button class="tag" data-text="有点咸">有点咸</button>
-                    <button class="tag" data-text="不太新鲜">不太新鲜</button>
-                    <button class="tag" data-text="味道不够正宗">味道不够正宗</button>
-                </div>
+            
+            <div class="buttons">
+                <button class="back-btn" onclick="goBack()">返回编辑</button>
             </div>
-
-            <div class="category-section" data-category="service">
-                <h4 class="category-title">👥 服务</h4>
-                <div class="tags-container">
-                    <button class="tag" data-text="服务态度很好">服务态度很好</button>
-                    <button class="tag" data-text="上菜速度快">上菜速度快</button>
-                    <button class="tag" data-text="服务员很热情">服务员很热情</button>
-                    <button class="tag" data-text="服务还可以">服务还可以</button>
-                    <button class="tag" data-text="服务周到">服务周到</button>
-                    <button class="tag" data-text="服务态度一般">服务态度一般</button>
-                    <button class="tag" data-text="上菜有点慢">上菜有点慢</button>
-                    <button class="tag" data-text="服务员不够热情">服务员不够热情</button>
-                    <button class="tag" data-text="等位时间长">等位时间长</button>
-                </div>
-            </div>
-
-            <div class="category-section" data-category="price">
-                <h4 class="category-title">💰 价格</h4>
-                <div class="tags-container">
-                    <button class="tag" data-text="性价比很高">性价比很高</button>
-                    <button class="tag" data-text="价格合理">价格合理</button>
-                    <button class="tag" data-text="有点小贵">有点小贵</button>
-                    <button class="tag" data-text="物超所值">物超所值</button>
-                    <button class="tag" data-text="价格实惠">价格实惠</button>
-                    <button class="tag" data-text="性价比一般">性价比一般</button>
-                    <button class="tag" data-text="价格偏高">价格偏高</button>
-                    <button class="tag" data-text="不太值这个价">不太值这个价</button>
-                </div>
-            </div>
-
-            <div class="category-section" data-category="overall">
-                <h4 class="category-title">⭐ 综合</h4>
-                <div class="tags-container">
-                    <button class="tag" data-text="非常不错，下回还来">非常不错，下回还来</button>
-                    <button class="tag" data-text="值得推荐">值得推荐</button>
-                    <button class="tag" data-text="整体体验不错">整体体验不错</button>
-                    <button class="tag" data-text="还会再来的">还会再来的</button>
-                    <button class="tag" data-text="总的来说还行">总的来说还行</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="section text-section">
-            <h3 class="section-title">📝 评价内容</h3>
-            <textarea id="reviewText" class="text-input" placeholder="点击上方标签快速添加评价内容，或者直接在这里输入..." spellcheck="false"></textarea>
-        </section>
-
-        <div class="button-section">
-            <button class="btn copy-btn" id="copyBtn">📋 复制评价</button>
-            <button class="btn clear-btn" id="clearBtn">🗑️ 清空内容</button>
         </div>
     </div>
 
-    <div id="toast" class="toast" role="alert" aria-live="polite">✅ 复制成功！</div>
-
     <script>
-        // 性能优化的JavaScript
-        (function() {
-            'use strict';
-            
-            // 缓存DOM元素
-            const reviewText = document.getElementById('reviewText');
-            const copyBtn = document.getElementById('copyBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const toast = document.getElementById('toast');
-            const tagsSection = document.querySelector('.tags-section');
-            
-            // 防抖函数
-            const debounce = (func, wait) => {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func.apply(this, args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            };
+        let selectedTags = [];
 
-            // 节流函数
-            const throttle = (func, limit) => {
-                let inThrottle;
-                return function(...args) {
-                    if (!inThrottle) {
-                        func.apply(this, args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                };
-            };
-
-            // 优化的添加文本函数
-            const addToText = (text) => {
-                const currentText = reviewText.value.trim();
-                reviewText.value = currentText ? `${currentText}，${text}` : text;
+        // 初始化标签点击事件
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const text = this.dataset.text;
                 
-                // 使用requestAnimationFrame优化DOM操作
-                requestAnimationFrame(() => {
-                    reviewText.focus();
-                    reviewText.setSelectionRange(reviewText.value.length, reviewText.value.length);
-                });
-            };
-
-            // 事件委托处理标签点击
-            tagsSection.addEventListener('click', (e) => {
-                if (e.target.classList.contains('tag')) {
-                    e.preventDefault();
-                    const text = e.target.dataset.text;
-                    if (text) {
-                        addToText(text);
-                        // 添加触觉反馈（如果支持）
-                        if ('vibrate' in navigator) {
-                            navigator.vibrate(50);
-                        }
-                    }
+                if (this.classList.contains('selected')) {
+                    // 取消选中
+                    this.classList.remove('selected');
+                    selectedTags = selectedTags.filter(t => t !== text);
+                } else {
+                    // 选中
+                    this.classList.add('selected');
+                    selectedTags.push(text);
                 }
+                
+                updateReviewContent();
             });
+        });
 
-            // 优化的复制函数
-            const copyText = async () => {
-                const text = reviewText.value.trim();
-                
-                if (!text) {
-                    showToast('⚠️ 没有内容可复制');
-                    return;
-                }
-                
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
-                        showToast('✅ 复制成功！');
-                    } else {
-                        // 降级处理
-                        reviewText.select();
-                        reviewText.setSelectionRange(0, 99999);
-                        const successful = document.execCommand('copy');
-                        showToast(successful ? '✅ 复制成功！' : '❌ 复制失败，请手动复制');
-                    }
-                } catch (err) {
-                    console.warn('Copy failed:', err);
-                    showToast('❌ 复制失败，请手动复制');
-                }
-            };
+        function updateReviewContent() {
+            const content = document.getElementById('reviewContent');
+            if (selectedTags.length === 0) {
+                content.textContent = '';
+            } else {
+                content.textContent = selectedTags.join('，') + '。';
+            }
+        }
 
-            // 清空文本函数
-            const clearText = () => {
-                reviewText.value = '';
-                requestAnimationFrame(() => reviewText.focus());
-            };
-
-            // 优化的Toast显示函数
-            let toastTimer;
-            const showToast = (message) => {
-                clearTimeout(toastTimer);
-                toast.textContent = message;
-                toast.classList.add('show');
-                
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2500);
-            };
-
-            // 事件监听器
-            copyBtn.addEventListener('click', copyText);
-            clearBtn.addEventListener('click', clearText);
-
-            // 键盘快捷键
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'd' && document.activeElement !== reviewText) {
-                    e.preventDefault();
-                    clearText();
-                }
+        function clearReview() {
+            selectedTags = [];
+            document.querySelectorAll('.tag.selected').forEach(tag => {
+                tag.classList.remove('selected');
             });
+            updateReviewContent();
+        }
 
-            // 移动端优化
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                // 防止双击缩放
-                let lastTouchEnd = 0;
-                document.addEventListener('touchend', (e) => {
-                    const now = Date.now();
-                    if (now - lastTouchEnd <= 300) {
-                        e.preventDefault();
-                    }
-                    lastTouchEnd = now;
-                }, { passive: false });
-
-                // 优化输入框滚动
-                const debouncedScroll = debounce(() => {
-                    reviewText.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                }, 300);
-
-                reviewText.addEventListener('focus', debouncedScroll);
+        async function submitReview() {
+            if (selectedTags.length === 0) {
+                alert('请至少选择一个评价标签');
+                return;
             }
 
-            // 性能监控（开发环境）
-            if (window.performance && window.performance.mark) {
-                window.performance.mark('app-ready');
-                
-                // 监控大型DOM操作
-                const observer = new PerformanceObserver((list) => {
-                    for (const entry of list.getEntries()) {
-                        if (entry.duration > 50) {
-                            console.warn('Long task detected:', entry);
-                        }
-                    }
-                });
-                
-                if ('PerformanceObserver' in window) {
-                    observer.observe({ entryTypes: ['longtask'] });
-                }
-            }
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const loading = submitBtn.querySelector('.loading');
+            
+            // 显示加载状态
+            submitBtn.disabled = true;
+            btnText.style.opacity = '0';
+            loading.style.display = 'block';
 
-            // 预加载优化
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => {
-                    // 预热关键功能
-                    const dummyText = '测试';
-                    addToText(dummyText);
-                    reviewText.value = '';
-                });
-            }
-
-            // 内存清理
-            window.addEventListener('beforeunload', () => {
-                // 清理定时器
-                clearTimeout(toastTimer);
+            try {
+                // 模拟 AI 润色过程
+                const reviewText = selectedTags.join('，') + '。';
+                const polishedReview = await polishReview(reviewText);
                 
-                // 移除事件监听器
-                if (observer && observer.disconnect) {
-                    observer.disconnect();
-                }
+                // 显示结果页面
+                document.getElementById('resultText').textContent = polishedReview;
+                document.getElementById('main-page').style.display = 'none';
+                document.getElementById('result-page').style.display = 'block';
+                
+            } catch (error) {
+                alert('生成评价时出现错误，请重试');
+                console.error('Error:', error);
+            } finally {
+                // 恢复按钮状态
+                submitBtn.disabled = false;
+                btnText.style.opacity = '1';
+                loading.style.display = 'none';
+            }
+        }
+
+        async function polishReview(reviewText) {
+            // 模拟调用 Cloudflare AI 接口
+            // 实际部署时需要替换为真实的 Cloudflare Workers AI 调用
+            
+            // 模拟网络延迟
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // 模拟 AI 润色结果
+            const templates = [
+                `这家餐厅真的让我印象深刻！${reviewText.replace('。', '')}，整体用餐体验非常棒。老板和服务员都很用心，能感受到他们对食物的热爱。推荐大家来试试，绝对不会失望！`,
+                `昨天和朋友来这家店吃饭，${reviewText.replace('。', '')}，我们都很满意。从进门到离开，整个过程都很愉快。特别是菜品的味道，真的很棒！下次有机会一定还会再来的。`,
+                `偶然发现这家宝藏餐厅，${reviewText.replace('。', '')}，完全超出了我的期待。无论是环境、服务还是口味都很不错，性价比也很高。已经安利给周围的朋友了，强烈推荐！`,
+                `今天来这家店用餐，${reviewText.replace('。', '')}，总的来说是一次很不错的体验。店家很用心，细节处理得也很好。如果你在附近的话，很推荐来试试看！`
+            ];
+            
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        function copyResult() {
+            const resultText = document.getElementById('resultText').textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(resultText).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '已复制！';
+                    btn.style.background = '#38a169';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#48bb78';
+                    }, 2000);
+                });
+            } else {
+                // 备用方案
+                const textArea = document.createElement('textarea');
+                textArea.value = resultText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '已复制！';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }
+        }
+
+        function goBack() {
+            document.getElementById('main-page').style.display = 'block';
+            document.getElementById('result-page').style.display = 'none';
+        }
+
+        // 添加触摸反馈
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
             });
-
-        })();
+            
+            tag.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
     </script>
 </body>
 </html>

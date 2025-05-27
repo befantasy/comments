@@ -171,6 +171,16 @@
             border-color: #cbd5e0;
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
+        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -215,38 +225,7 @@
             font-size: 15px;
             line-height: 1.8;
             color: #2d3748;
-            margin-bottom: 16px;
-        }
-
-        .copy-btn {
-            background: #48bb78;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .copy-btn:hover {
-            background: #38a169;
-            transform: translateY(-1px);
-        }
-
-        .back-btn {
-            background: #718096;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-right: 12px;
-        }
-
-        .back-btn:hover {
-            background: #4a5568;
+            margin-bottom: 0;
         }
 
         @media (max-width: 480px) {
@@ -361,11 +340,11 @@
             
             <div class="result-content">
                 <div class="result-text" id="resultText"></div>
-                <button class="copy-btn" onclick="copyResult()">复制评价</button>
             </div>
             
             <div class="buttons">
-                <button class="back-btn" onclick="goBack()">返回编辑</button>
+                <button class="btn btn-secondary" onclick="goBack()">返回编辑</button>
+                <button class="btn btn-success" onclick="copyResult()">复制评价</button>
             </div>
         </div>
     </div>
@@ -471,11 +450,11 @@
                     const btn = event.target;
                     const originalText = btn.textContent;
                     btn.textContent = '已复制！';
-                    btn.style.background = '#38a169';
+                    btn.style.background = 'linear-gradient(135deg, #38a169, #2f855a)';
                     
                     setTimeout(() => {
                         btn.textContent = originalText;
-                        btn.style.background = '#48bb78';
+                        btn.style.background = 'linear-gradient(135deg, #48bb78, #38a169)';
                     }, 2000);
                 });
             } else {

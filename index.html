@@ -2,30 +2,48 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>餐厅评价助手</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* CSS Reset & Base */
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(45deg, #ff9a9e, #fecfef);
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #e1e5e9;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 25px;
+            --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: var(--primary-gradient);
             min-height: 100vh;
             padding: 20px;
+            font-display: swap;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
+            border-radius: var(--border-radius-lg);
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
             backdrop-filter: blur(10px);
+            contain: layout style paint;
         }
 
         .header {
@@ -34,22 +52,31 @@
         }
 
         .header h1 {
-            color: #333;
+            color: var(--text-primary);
             font-size: 2em;
             margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 700;
         }
 
         .header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.9em;
         }
 
-        .tags-section {
+        /* Shared section styles */
+        .section {
             margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
         .category-section {
@@ -58,23 +85,17 @@
             padding: 20px;
             border-radius: 15px;
             border-left: 4px solid #667eea;
+            contain: layout style;
         }
 
         .category-title {
             font-size: 1.1em;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 12px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .section-title {
-            font-size: 1.2em;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
         }
 
         .tags-container {
@@ -84,44 +105,57 @@
         }
 
         .tag {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
-            color: #333;
+            background: var(--secondary-gradient);
+            color: var(--text-primary);
             padding: 8px 16px;
-            border-radius: 25px;
+            border-radius: var(--border-radius-xl);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             border: none;
             font-size: 0.9em;
             font-weight: 500;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+        }
+
+        .tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .tag:hover::before {
+            left: 100%;
         }
 
         .tag:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(45deg, #fecfef, #ff9a9e);
+            box-shadow: var(--shadow-md);
         }
 
         .tag:active {
-            transform: translateY(0);
-            background: linear-gradient(45deg, #ff6b95, #fda4af);
-        }
-
-        .text-section {
-            margin-bottom: 20px;
+            transform: translateY(0) scale(0.98);
         }
 
         .text-input {
             width: 100%;
             min-height: 120px;
             padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
             font-size: 1em;
             line-height: 1.5;
             resize: vertical;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: var(--transition);
             font-family: inherit;
+            will-change: border-color, box-shadow;
         }
 
         .text-input:focus {
@@ -139,16 +173,37 @@
         .btn {
             padding: 12px 30px;
             border: none;
-            border-radius: 25px;
+            border-radius: var(--border-radius-xl);
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
         }
 
         .copy-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             color: white;
         }
 
@@ -174,78 +229,55 @@
             background: #4caf50;
             color: white;
             padding: 15px 25px;
-            border-radius: 25px;
+            border-radius: var(--border-radius-xl);
             font-weight: 500;
             box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
             transform: translateX(400px);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
+            pointer-events: none;
         }
 
         .toast.show {
             transform: translateX(0);
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
+        /* Media queries optimized */
+        @media screen and (max-width: 768px) {
+            body { padding: 10px; }
+            .container { 
+                padding: 20px 15px; 
+                margin: 0; 
+                border-radius: 15px; 
             }
-            
-            .container {
-                padding: 20px 15px;
-                margin: 0;
-                border-radius: 15px;
+            .header h1 { font-size: 1.5em; }
+            .header p { font-size: 0.85em; }
+            .category-section { 
+                padding: 15px; 
+                margin-bottom: 20px; 
             }
-            
-            .header h1 {
-                font-size: 1.5em;
-            }
-            
-            .header p {
-                font-size: 0.85em;
-            }
-            
-            .category-section {
-                padding: 15px;
-                margin-bottom: 20px;
-            }
-            
-            .category-title {
-                font-size: 1em;
-            }
-            
-            .tags-container {
-                gap: 6px;
-            }
-            
+            .category-title { font-size: 1em; }
+            .tags-container { gap: 6px; }
             .tag {
                 font-size: 0.85em;
                 padding: 8px 14px;
                 border-radius: 20px;
-                touch-action: manipulation;
                 -webkit-tap-highlight-color: transparent;
             }
-            
             .text-input {
                 min-height: 100px;
                 padding: 12px;
-                font-size: 16px; /* 防止iOS放大 */
+                font-size: 16px;
                 border-radius: 10px;
             }
-            
             .button-section {
                 flex-direction: column;
                 gap: 12px;
             }
-            
             .btn {
                 padding: 14px 25px;
-                font-size: 1em;
-                border-radius: 25px;
-                touch-action: manipulation;
                 -webkit-tap-highlight-color: transparent;
             }
-            
             .toast {
                 top: 10px;
                 right: 10px;
@@ -253,237 +285,326 @@
                 transform: translateY(-100px);
                 text-align: center;
             }
-            
             .toast.show {
                 transform: translateY(0);
             }
         }
 
-        @media (max-width: 480px) {
+        @media screen and (max-width: 480px) {
             .tag {
                 font-size: 0.8em;
                 padding: 6px 12px;
             }
-            
-            .category-section {
-                padding: 12px;
-            }
-            
+            .category-section { padding: 12px; }
             .text-input {
                 min-height: 80px;
                 padding: 10px;
+            }
+        }
+
+        /* Performance optimizations */
+        .tag, .btn {
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        .tags-container {
+            contain: layout;
+        }
+
+        /* Reduce paint on scroll */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>🍽️ 餐厅评价助手</h1>
             <p>点击标签快速生成餐厅评价</p>
-        </div>
+        </header>
 
-        <div class="tags-section">
+        <section class="section tags-section">
             <h3 class="section-title">💭 评价标签</h3>
             
-            <!-- 环境分类 -->
-            <div class="category-section">
+            <div class="category-section" data-category="environment">
                 <h4 class="category-title">🏠 环境</h4>
                 <div class="tags-container">
-                    <button class="tag" onclick="addToText('环境接地气，适合朋友小聚')">环境接地气，适合朋友小聚</button>
-                    <button class="tag" onclick="addToText('装修很有格调')">装修很有格调</button>
-                    <button class="tag" onclick="addToText('氛围温馨舒适')">氛围温馨舒适</button>
-                    <button class="tag" onclick="addToText('位置很好找')">位置很好找</button>
-                    <button class="tag" onclick="addToText('环境还不错')">环境还不错</button>
-                    <button class="tag" onclick="addToText('店面干净整洁')">店面干净整洁</button>
-                    <button class="tag" onclick="addToText('环境一般般')">环境一般般</button>
-                    <button class="tag" onclick="addToText('装修有点老旧')">装修有点老旧</button>
-                    <button class="tag" onclick="addToText('空间比较小')">空间比较小</button>
-                    <button class="tag" onclick="addToText('有点吵闹')">有点吵闹</button>
+                    <button class="tag" data-text="环境接地气，适合朋友小聚">环境接地气，适合朋友小聚</button>
+                    <button class="tag" data-text="装修很有格调">装修很有格调</button>
+                    <button class="tag" data-text="氛围温馨舒适">氛围温馨舒适</button>
+                    <button class="tag" data-text="位置很好找">位置很好找</button>
+                    <button class="tag" data-text="环境还不错">环境还不错</button>
+                    <button class="tag" data-text="店面干净整洁">店面干净整洁</button>
+                    <button class="tag" data-text="环境一般般">环境一般般</button>
+                    <button class="tag" data-text="装修有点老旧">装修有点老旧</button>
+                    <button class="tag" data-text="空间比较小">空间比较小</button>
+                    <button class="tag" data-text="有点吵闹">有点吵闹</button>
                 </div>
             </div>
 
-            <!-- 口味分类 -->
-            <div class="category-section">
+            <div class="category-section" data-category="taste">
                 <h4 class="category-title">🍽️ 口味</h4>
                 <div class="tags-container">
-                    <button class="tag" onclick="addToText('色香味俱全，好吃')">色香味俱全，好吃</button>
-                    <button class="tag" onclick="addToText('味道很正宗')">味道很正宗</button>
-                    <button class="tag" onclick="addToText('分量足够')">分量足够</button>
-                    <button class="tag" onclick="addToText('口感不错')">口感不错</button>
-                    <button class="tag" onclick="addToText('菜品新鲜')">菜品新鲜</button>
-                    <button class="tag" onclick="addToText('味道一般般')">味道一般般</button>
-                    <button class="tag" onclick="addToText('口味偏淡')">口味偏淡</button>
-                    <button class="tag" onclick="addToText('分量有点少')">分量有点少</button>
-                    <button class="tag" onclick="addToText('口感偏硬')">口感偏硬</button>
-                    <button class="tag" onclick="addToText('有点咸')">有点咸</button>
-                    <button class="tag" onclick="addToText('不太新鲜')">不太新鲜</button>
-                    <button class="tag" onclick="addToText('味道不够正宗')">味道不够正宗</button>
+                    <button class="tag" data-text="色香味俱全，好吃">色香味俱全，好吃</button>
+                    <button class="tag" data-text="味道很正宗">味道很正宗</button>
+                    <button class="tag" data-text="分量足够">分量足够</button>
+                    <button class="tag" data-text="口感不错">口感不错</button>
+                    <button class="tag" data-text="菜品新鲜">菜品新鲜</button>
+                    <button class="tag" data-text="味道一般般">味道一般般</button>
+                    <button class="tag" data-text="口味偏淡">口味偏淡</button>
+                    <button class="tag" data-text="分量有点少">分量有点少</button>
+                    <button class="tag" data-text="口感偏硬">口感偏硬</button>
+                    <button class="tag" data-text="有点咸">有点咸</button>
+                    <button class="tag" data-text="不太新鲜">不太新鲜</button>
+                    <button class="tag" data-text="味道不够正宗">味道不够正宗</button>
                 </div>
             </div>
 
-            <!-- 服务分类 -->
-            <div class="category-section">
+            <div class="category-section" data-category="service">
                 <h4 class="category-title">👥 服务</h4>
                 <div class="tags-container">
-                    <button class="tag" onclick="addToText('服务态度很好')">服务态度很好</button>
-                    <button class="tag" onclick="addToText('上菜速度快')">上菜速度快</button>
-                    <button class="tag" onclick="addToText('服务员很热情')">服务员很热情</button>
-                    <button class="tag" onclick="addToText('服务还可以')">服务还可以</button>
-                    <button class="tag" onclick="addToText('服务周到')">服务周到</button>
-                    <button class="tag" onclick="addToText('服务态度一般')">服务态度一般</button>
-                    <button class="tag" onclick="addToText('上菜有点慢')">上菜有点慢</button>
-                    <button class="tag" onclick="addToText('服务员不够热情')">服务员不够热情</button>
-                    <button class="tag" onclick="addToText('等位时间长')">等位时间长</button>
+                    <button class="tag" data-text="服务态度很好">服务态度很好</button>
+                    <button class="tag" data-text="上菜速度快">上菜速度快</button>
+                    <button class="tag" data-text="服务员很热情">服务员很热情</button>
+                    <button class="tag" data-text="服务还可以">服务还可以</button>
+                    <button class="tag" data-text="服务周到">服务周到</button>
+                    <button class="tag" data-text="服务态度一般">服务态度一般</button>
+                    <button class="tag" data-text="上菜有点慢">上菜有点慢</button>
+                    <button class="tag" data-text="服务员不够热情">服务员不够热情</button>
+                    <button class="tag" data-text="等位时间长">等位时间长</button>
                 </div>
             </div>
 
-            <!-- 价格分类 -->
-            <div class="category-section">
+            <div class="category-section" data-category="price">
                 <h4 class="category-title">💰 价格</h4>
                 <div class="tags-container">
-                    <button class="tag" onclick="addToText('性价比很高')">性价比很高</button>
-                    <button class="tag" onclick="addToText('价格合理')">价格合理</button>
-                    <button class="tag" onclick="addToText('有点小贵')">有点小贵</button>
-                    <button class="tag" onclick="addToText('物超所值')">物超所值</button>
-                    <button class="tag" onclick="addToText('价格实惠')">价格实惠</button>
-                    <button class="tag" onclick="addToText('性价比一般')">性价比一般</button>
-                    <button class="tag" onclick="addToText('价格偏高')">价格偏高</button>
-                    <button class="tag" onclick="addToText('不太值这个价')">不太值这个价</button>
+                    <button class="tag" data-text="性价比很高">性价比很高</button>
+                    <button class="tag" data-text="价格合理">价格合理</button>
+                    <button class="tag" data-text="有点小贵">有点小贵</button>
+                    <button class="tag" data-text="物超所值">物超所值</button>
+                    <button class="tag" data-text="价格实惠">价格实惠</button>
+                    <button class="tag" data-text="性价比一般">性价比一般</button>
+                    <button class="tag" data-text="价格偏高">价格偏高</button>
+                    <button class="tag" data-text="不太值这个价">不太值这个价</button>
                 </div>
             </div>
 
-            <!-- 综合评价 -->
-            <div class="category-section">
+            <div class="category-section" data-category="overall">
                 <h4 class="category-title">⭐ 综合</h4>
                 <div class="tags-container">
-                    <button class="tag" onclick="addToText('非常不错，下回还来')">非常不错，下回还来</button>
-                    <button class="tag" onclick="addToText('值得推荐')">值得推荐</button>
-                    <button class="tag" onclick="addToText('整体体验不错')">整体体验不错</button>
-                    <button class="tag" onclick="addToText('还会再来的')">还会再来的</button>
-                    <button class="tag" onclick="addToText('总的来说还行')">总的来说还行</button>
+                    <button class="tag" data-text="非常不错，下回还来">非常不错，下回还来</button>
+                    <button class="tag" data-text="值得推荐">值得推荐</button>
+                    <button class="tag" data-text="整体体验不错">整体体验不错</button>
+                    <button class="tag" data-text="还会再来的">还会再来的</button>
+                    <button class="tag" data-text="总的来说还行">总的来说还行</button>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="text-section">
+        <section class="section text-section">
             <h3 class="section-title">📝 评价内容</h3>
-            <textarea id="reviewText" class="text-input" placeholder="点击上方标签快速添加评价内容，或者直接在这里输入..."></textarea>
-        </div>
+            <textarea id="reviewText" class="text-input" placeholder="点击上方标签快速添加评价内容，或者直接在这里输入..." spellcheck="false"></textarea>
+        </section>
 
         <div class="button-section">
-            <button class="btn copy-btn" onclick="copyText()">📋 复制评价</button>
-            <button class="btn clear-btn" onclick="clearText()">🗑️ 清空内容</button>
+            <button class="btn copy-btn" id="copyBtn">📋 复制评价</button>
+            <button class="btn clear-btn" id="clearBtn">🗑️ 清空内容</button>
         </div>
     </div>
 
-    <div id="toast" class="toast">✅ 复制成功！</div>
+    <div id="toast" class="toast" role="alert" aria-live="polite">✅ 复制成功！</div>
 
     <script>
-        function addToText(text) {
-            const textarea = document.getElementById('reviewText');
-            const currentText = textarea.value;
+        // 性能优化的JavaScript
+        (function() {
+            'use strict';
             
-            // 如果当前有内容，则添加逗号和空格分隔
-            if (currentText.trim()) {
-                textarea.value = currentText + '，' + text;
-            } else {
-                textarea.value = text;
-            }
-            
-            // 自动聚焦到文本框末尾
-            textarea.focus();
-            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-        }
-
-        function copyText() {
-            const textarea = document.getElementById('reviewText');
-            const text = textarea.value;
-            
-            if (!text.trim()) {
-                showToast('⚠️ 没有内容可复制');
-                return;
-            }
-            
-            // 使用现代的剪贴板API
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('✅ 复制成功！');
-                }).catch(() => {
-                    // 降级处理
-                    fallbackCopy(textarea);
-                });
-            } else {
-                // 降级处理
-                fallbackCopy(textarea);
-            }
-        }
-
-        function fallbackCopy(textarea) {
-            textarea.select();
-            textarea.setSelectionRange(0, 99999);
-            
-            try {
-                document.execCommand('copy');
-                showToast('✅ 复制成功！');
-            } catch (err) {
-                showToast('❌ 复制失败，请手动复制');
-            }
-        }
-
-        function clearText() {
-            document.getElementById('reviewText').value = '';
-            document.getElementById('reviewText').focus();
-        }
-
-        function showToast(message) {
+            // 缓存DOM元素
+            const reviewText = document.getElementById('reviewText');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
+            const tagsSection = document.querySelector('.tags-section');
             
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
+            // 防抖函数
+            const debounce = (func, wait) => {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func.apply(this, args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            };
 
-        // 添加键盘快捷键支持
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'c' && document.activeElement.id === 'reviewText') {
-                    // Ctrl+C 时不做特殊处理，使用默认复制行为
-                } else if (e.key === 'd') {
+            // 节流函数
+            const throttle = (func, limit) => {
+                let inThrottle;
+                return function(...args) {
+                    if (!inThrottle) {
+                        func.apply(this, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                };
+            };
+
+            // 优化的添加文本函数
+            const addToText = (text) => {
+                const currentText = reviewText.value.trim();
+                reviewText.value = currentText ? `${currentText}，${text}` : text;
+                
+                // 使用requestAnimationFrame优化DOM操作
+                requestAnimationFrame(() => {
+                    reviewText.focus();
+                    reviewText.setSelectionRange(reviewText.value.length, reviewText.value.length);
+                });
+            };
+
+            // 事件委托处理标签点击
+            tagsSection.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag')) {
+                    e.preventDefault();
+                    const text = e.target.dataset.text;
+                    if (text) {
+                        addToText(text);
+                        // 添加触觉反馈（如果支持）
+                        if ('vibrate' in navigator) {
+                            navigator.vibrate(50);
+                        }
+                    }
+                }
+            });
+
+            // 优化的复制函数
+            const copyText = async () => {
+                const text = reviewText.value.trim();
+                
+                if (!text) {
+                    showToast('⚠️ 没有内容可复制');
+                    return;
+                }
+                
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                        showToast('✅ 复制成功！');
+                    } else {
+                        // 降级处理
+                        reviewText.select();
+                        reviewText.setSelectionRange(0, 99999);
+                        const successful = document.execCommand('copy');
+                        showToast(successful ? '✅ 复制成功！' : '❌ 复制失败，请手动复制');
+                    }
+                } catch (err) {
+                    console.warn('Copy failed:', err);
+                    showToast('❌ 复制失败，请手动复制');
+                }
+            };
+
+            // 清空文本函数
+            const clearText = () => {
+                reviewText.value = '';
+                requestAnimationFrame(() => reviewText.focus());
+            };
+
+            // 优化的Toast显示函数
+            let toastTimer;
+            const showToast = (message) => {
+                clearTimeout(toastTimer);
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            };
+
+            // 事件监听器
+            copyBtn.addEventListener('click', copyText);
+            clearBtn.addEventListener('click', clearText);
+
+            // 键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd' && document.activeElement !== reviewText) {
                     e.preventDefault();
                     clearText();
                 }
-            }
-        });
-
-        // 移动端优化：防止双击缩放
-        document.addEventListener('touchstart', function(event) {
-            if (event.touches.length > 1) {
-                event.preventDefault();
-            }
-        });
-
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-
-        // 移动端输入框优化
-        const textarea = document.getElementById('reviewText');
-        if (textarea) {
-            textarea.addEventListener('focus', function() {
-                // 延迟滚动，确保键盘弹出后再滚动
-                setTimeout(() => {
-                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 300);
             });
-        }
+
+            // 移动端优化
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // 防止双击缩放
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', (e) => {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                        e.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, { passive: false });
+
+                // 优化输入框滚动
+                const debouncedScroll = debounce(() => {
+                    reviewText.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 300);
+
+                reviewText.addEventListener('focus', debouncedScroll);
+            }
+
+            // 性能监控（开发环境）
+            if (window.performance && window.performance.mark) {
+                window.performance.mark('app-ready');
+                
+                // 监控大型DOM操作
+                const observer = new PerformanceObserver((list) => {
+                    for (const entry of list.getEntries()) {
+                        if (entry.duration > 50) {
+                            console.warn('Long task detected:', entry);
+                        }
+                    }
+                });
+                
+                if ('PerformanceObserver' in window) {
+                    observer.observe({ entryTypes: ['longtask'] });
+                }
+            }
+
+            // 预加载优化
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => {
+                    // 预热关键功能
+                    const dummyText = '测试';
+                    addToText(dummyText);
+                    reviewText.value = '';
+                });
+            }
+
+            // 内存清理
+            window.addEventListener('beforeunload', () => {
+                // 清理定时器
+                clearTimeout(toastTimer);
+                
+                // 移除事件监听器
+                if (observer && observer.disconnect) {
+                    observer.disconnect();
+                }
+            });
+
+        })();
     </script>
 </body>
 </html>

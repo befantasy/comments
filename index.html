@@ -98,6 +98,40 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
+        /* 中性标签样式 */
+        .tag.neutral {
+            background: #f0f4f8;
+            border-color: #cbd5e0;
+            color: #4a5568;
+        }
+
+        .tag.neutral:hover {
+            border-color: #a0aec0;
+        }
+
+        .tag.neutral.selected {
+            background: linear-gradient(135deg, #718096, #4a5568);
+            border-color: #718096;
+            color: white;
+        }
+
+        /* 负面标签样式 */
+        .tag.negative {
+            background: #fed7d7;
+            border-color: #feb2b2;
+            color: #c53030;
+        }
+
+        .tag.negative:hover {
+            border-color: #f56565;
+        }
+
+        .tag.negative.selected {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            border-color: #f56565;
+            color: white;
+        }
+
         .review-section {
             margin: 30px 0;
             padding: 20px;
@@ -259,6 +293,9 @@
                     <div class="tag" data-text="环境接地气，适合朋友小聚">接地气</div>
                     <div class="tag" data-text="位置便利，交通方便">位置便利</div>
                     <div class="tag" data-text="店内很干净整洁">干净整洁</div>
+                    <div class="tag neutral" data-text="环境一般，不算出彩">环境一般</div>
+                    <div class="tag neutral" data-text="装修比较老旧">装修老旧</div>
+                    <div class="tag negative" data-text="环境嘈杂，影响用餐">环境嘈杂</div>
                 </div>
             </div>
 
@@ -273,6 +310,10 @@
                     <div class="tag" data-text="口味清淡，比较健康">口味清淡</div>
                     <div class="tag" data-text="味道偏重，很下饭">味道偏重</div>
                     <div class="tag" data-text="创新菜品，口味独特">创新独特</div>
+                    <div class="tag neutral" data-text="口味中规中矩">口味中规</div>
+                    <div class="tag neutral" data-text="分量适中，不多不少">分量适中</div>
+                    <div class="tag negative" data-text="口味偏咸，有点腻">口味偏咸</div>
+                    <div class="tag negative" data-text="分量有点少，不太够吃">分量偏少</div>
                 </div>
             </div>
 
@@ -286,6 +327,9 @@
                     <div class="tag" data-text="服务态度很好，很耐心">态度很好</div>
                     <div class="tag" data-text="老板很亲切，像朋友一样">老板亲切</div>
                     <div class="tag" data-text="会主动推荐菜品">主动推荐</div>
+                    <div class="tag neutral" data-text="服务还算可以">服务一般</div>
+                    <div class="tag negative" data-text="服务态度冷淡">态度冷淡</div>
+                    <div class="tag negative" data-text="上菜速度比较慢">上菜慢</div>
                 </div>
             </div>
 
@@ -299,6 +343,9 @@
                     <div class="tag" data-text="价位适中，可以接受">价位适中</div>
                     <div class="tag" data-text="有点小贵，但值得">有点小贵</div>
                     <div class="tag" data-text="价格便宜，量大实惠">价格便宜</div>
+                    <div class="tag neutral" data-text="价格中等水平">价格中等</div>
+                    <div class="tag negative" data-text="价格偏高，性价比不够">价格偏高</div>
+                    <div class="tag negative" data-text="性价比较低，不太值">性价比低</div>
                 </div>
             </div>
 
@@ -312,6 +359,9 @@
                     <div class="tag" data-text="是附近最好的一家">附近最好</div>
                     <div class="tag" data-text="下次还会再来">下次再来</div>
                     <div class="tag" data-text="超出预期，很惊喜">超出预期</div>
+                    <div class="tag neutral" data-text="体验还行，不算特别">体验还行</div>
+                    <div class="tag neutral" data-text="可以尝试，但不是首选">可以尝试</div>
+                    <div class="tag negative" data-text="有些失望，不太符合期待">有些失望</div>
                 </div>
             </div>
 
@@ -333,7 +383,7 @@
 
         <div id="result-page" class="result-page">
             <div class="header">
-                <h1>✨ 评价归纳</h1>
+                <h1>✨评价归纳✨</h1>
                 <p>感谢您的点评</p>
                 <p>我们会悉心倾听，不断提升您的用餐体验</p>
             </div>
@@ -436,9 +486,9 @@
                         text: reviewText,
                         prompt: `请将以下餐厅评价标签润色成一段自然流畅的餐厅点评，要求：
 1. 语言自然亲切，像朋友在分享用餐体验
-2. 保持原有信息的准确性
+2. 保持原有信息的准确性，包括正面、中性和负面评价
 3. 字数控制在80-120字之间
-4. 语调积极正面
+4. 语调真实客观，如实反映体验
 5. 适合发布在点评网站上
 
 评价标签：${reviewText}
@@ -467,13 +517,35 @@
             } catch (error) {
                 console.error('AI润色失败:', error);
                 
-                // 降级到本地模板
-                const templates = [
-                    `这家餐厅真的让我印象深刻！${reviewText.replace('。', '')}，整体用餐体验非常棒。老板和服务员都很用心，能感受到他们对食物的热爱。推荐大家来试试，绝对不会失望！`,
-                    `昨天和朋友来这家店吃饭，${reviewText.replace('。', '')}，我们都很满意。从进门到离开，整个过程都很愉快。特别是菜品的味道，真的很棒！下次有机会一定还会再来的。`,
-                    `偶然发现这家宝藏餐厅，${reviewText.replace('。', '')}，完全超出了我的期待。无论是环境、服务还是口味都很不错，性价比也很高。已经安利给周围的朋友了，强烈推荐！`,
-                    `今天来这家店用餐，${reviewText.replace('。', '')}，总的来说是一次很不错的体验。店家很用心，细节处理得也很好。如果你在附近的话，很推荐来试试看！`
-                ];
+                // 降级到本地模板，根据评价类型生成不同模板
+                const hasNegative = selectedTags.some(tag => 
+                    document.querySelector(`[data-text="${tag}"]`).classList.contains('negative')
+                );
+                const hasNeutral = selectedTags.some(tag => 
+                    document.querySelector(`[data-text="${tag}"]`).classList.contains('neutral')
+                );
+                
+                let templates = [];
+                
+                if (hasNegative) {
+                    templates = [
+                        `这次用餐体验有些起伏。${reviewText.replace('。', '')}，总的来说还是有一些需要改进的地方。希望店家能够重视客户反馈，提升服务质量。`,
+                        `和朋友来这家店用餐，${reviewText.replace('。', '')}。虽然有些方面不够理想，但也有一些亮点。建议大家可以了解清楚再做选择。`,
+                        `这家店的体验比较复杂，${reviewText.replace('。', '')}。有好的地方，也有不足之处。如果你不介意这些问题的话，可以试试看。`
+                    ];
+                } else if (hasNeutral) {
+                    templates = [
+                        `这家餐厅算是中规中矩吧，${reviewText.replace('。', '')}。整体体验还算可以，没有特别惊艳，但也没有太大问题。如果刚好路过可以试试。`,
+                        `昨天来这里吃饭，${reviewText.replace('。', '')}。说不上特别好，但也不算差。属于那种吃过就忘的类型，但偶尔来一次还是可以的。`,
+                        `和朋友一起来这家店，${reviewText.replace('。', '')}。整体感觉比较平庸，没有什么特别让人印象深刻的地方。价位合适的话倒是可以考虑。`
+                    ];
+                } else {
+                    templates = [
+                        `这家餐厅真的让我印象深刻！${reviewText.replace('。', '')}，整体用餐体验非常棒。老板和服务员都很用心，能感受到他们对食物的热爱。推荐大家来试试，绝对不会失望！`,
+                        `昨天和朋友来这家店吃饭，${reviewText.replace('。', '')}，我们都很满意。从进门到离开，整个过程都很愉快。特别是菜品的味道，真的很棒！下次有机会一定还会再来的。`,
+                        `偶然发现这家宝藏餐厅，${reviewText.replace('。', '')}，完全超出了我的期待。无论是环境、服务还是口味都很不错，性价比也很高。已经安利给周围的朋友了，强烈推荐！`
+                    ];
+                }
                 
                 return templates[Math.floor(Math.random() * templates.length)];
             }

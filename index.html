@@ -376,20 +376,24 @@
 
     <script>
         let selectedTags = [];
+        let selectedLabels = [];
 
         // 初始化标签点击事件
         document.querySelectorAll('.tag').forEach(tag => {
             tag.addEventListener('click', function() {
                 const text = this.dataset.text;
+                const label = this.textContent;
                 
                 if (this.classList.contains('selected')) {
                     // 取消选中
                     this.classList.remove('selected');
                     selectedTags = selectedTags.filter(t => t !== text);
+                    selectedLabels = selectedLabels.filter(l => l !== label);
                 } else {
                     // 选中
                     this.classList.add('selected');
                     selectedTags.push(text);
+                    selectedLabels.push(label);
                 }
                 
                 updateReviewContent();
@@ -407,6 +411,7 @@
 
         function clearReview() {
             selectedTags = [];
+            selectedLabels = [];
             document.querySelectorAll('.tag.selected').forEach(tag => {
                 tag.classList.remove('selected');
             });
@@ -458,7 +463,8 @@
                     },
                     body: JSON.stringify({
                         text: reviewText,
-                        selectedTags: selectedTags  // 新增：发送选中的标签数组
+                        selectedTags: selectedTags,
+                        selectedLabels: selectedLabels
                     })
                 });
 
